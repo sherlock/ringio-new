@@ -39,7 +39,6 @@
  *  ============================================================================
  */
 
-
 /*  ----------------------------------- OS Specific Headers           */
 #include <stdio.h>
 #include <stdlib.h>
@@ -51,11 +50,9 @@
 #include <ring_io_os.h>
 #include <ring_io.h>
 
-
 #if defined (__cplusplus)
 extern "C" {
 #endif /* defined (__cplusplus) */
-
 
 /** ============================================================================
  *  @func   main
@@ -65,50 +62,43 @@ extern "C" {
  *  @modif  None
  *  ============================================================================
  */
-int main (int argc, char ** argv)
-{
-    Char8 * dspExecutable    = NULL ;
-    Char8 * strBufferSize    = NULL ;
-    Char8 * strTotalBytes    = NULL ;
-    Char8 * strProcessorId   = NULL ;
-    Uint8 processorId        = 0    ;
+int main(int argc, char ** argv) {
+	Char8 * dspExecutable = NULL;
+	Char8 * strBufferSize = NULL;
+	Char8 * strTotalBytes = NULL;
+	Char8 * strProcessorId = NULL;
+	Uint8 processorId = 0;
 
+	if ((argc != 3) && (argc != 2)) {
+		printf("Usage : %s <absolute path of DSP executable> "
+			"<DSP Processor Id>\n"
+			"For DSP Processor Id,"
+			"\n\t use value of 0  if sample needs to be run on DSP 0 "
+			"\n\t use value of 1  if sample needs to be run on DSP 1"
+			"\n\t For single DSP configuration this is optional argument\n",
+				argv[0]);
+	} else {
+		dspExecutable = argv[1];
+		strBufferSize = "2048";
+		strTotalBytes = "128";
 
-    if ((argc != 3) && (argc != 2)) {
-        printf ("Usage : %s <absolute path of DSP executable> "
-                "<DSP Processor Id>\n"
-                "For DSP Processor Id,"
-                "\n\t use value of 0  if sample needs to be run on DSP 0 "
-                "\n\t use value of 1  if sample needs to be run on DSP 1"
-                "\n\t For single DSP configuration this is optional argument\n",
-                argv [0]) ;
-    }
-    else {
-        dspExecutable    = argv [1] ;
-        strBufferSize    = "2048";
-        strTotalBytes    = "128" ;
+		if (argc == 2) {
+			strProcessorId = "0";
+			processorId = 0;
+		} else if (argc == 3) {
+			strProcessorId = argv[2];
+			processorId = atoi(argv[2]);
+		}
 
-        if (argc == 2) {
-            strProcessorId   = "0" ;
-            processorId      =  0  ;
-        }
-        else if (argc == 3) {
-            strProcessorId   = argv [2] ;
-            processorId      = atoi (argv [2]) ;
-        }
+		if (processorId < MAX_PROCESSORS) {
 
-        if ( processorId < MAX_PROCESSORS) {
+			RING_IO_Main(dspExecutable, strBufferSize, strTotalBytes,
+					strProcessorId);
+		}
 
-            RING_IO_Main (dspExecutable,
-                           strBufferSize,
-                           strTotalBytes,
-                           strProcessorId) ;
-       }
-
-    }
-    return (0);
+	}
+	return (0);
 }
-
 
 #if defined (__cplusplus)
 }

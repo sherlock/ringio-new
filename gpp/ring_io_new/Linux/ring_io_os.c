@@ -40,7 +40,6 @@
  *  ============================================================================
  */
 
-
 /*  ----------------------------------- OS Specific Headers           */
 #include <stdio.h>
 #include <unistd.h>
@@ -64,7 +63,6 @@
 extern "C" {
 #endif /* defined (__cplusplus) */
 
-
 /** ============================================================================
  *  @name   RING_IO_SemObject
  *
@@ -77,8 +75,8 @@ extern "C" {
  *  ============================================================================
  */
 typedef struct RING_IO_SemObject_tag {
-    sem_t  sem ;
-} RING_IO_SemObject ;
+	sem_t sem;
+} RING_IO_SemObject;
 
 /** ============================================================================
  *  @func   RING_IO_0Print
@@ -89,10 +87,8 @@ typedef struct RING_IO_SemObject_tag {
  *  ============================================================================
  */
 NORMAL_API
-Void
-RING_IO_0Print (Char8 * str)
-{
-    printf (str) ;
+Void RING_IO_0Print(Char8 * str) {
+	printf(str);
 }
 
 /** ============================================================================
@@ -104,10 +100,8 @@ RING_IO_0Print (Char8 * str)
  *  ============================================================================
  */
 NORMAL_API
-Void
-RING_IO_1Print (Char8 * str, Uint32 arg)
-{
-    printf (str, arg) ;
+Void RING_IO_1Print(Char8 * str, Uint32 arg) {
+	printf(str, arg);
 }
 /** ============================================================================
  *  @func   RING_IO_YieldClient
@@ -118,10 +112,8 @@ RING_IO_1Print (Char8 * str, Uint32 arg)
  *  ============================================================================
  */
 NORMAL_API
-Void
-RING_IO_YieldClient ()
-{
-    sched_yield() ;
+Void RING_IO_YieldClient() {
+	sched_yield();
 }
 /** ============================================================================
  *  @func   RING_IO_Sleep
@@ -132,10 +124,8 @@ RING_IO_YieldClient ()
  *  ============================================================================
  */
 NORMAL_API
-Void
-RING_IO_Sleep (Uint32 uSec)
-{
-    usleep (uSec) ;
+Void RING_IO_Sleep(Uint32 uSec) {
+	usleep(uSec);
 }
 
 /** ============================================================================
@@ -150,38 +140,37 @@ NORMAL_API
 Void
 RING_IO_IntToString (IN Int num, OUT Char8 * str)
 {
-    /*  ------------------------------------------------------------------------
-     *  There can be a max of 7 char str for signed int including terminator
-     *  so we use a temp string of 7 char. The index is to the rightmost space
-     *  ie. 5. We divide the number by 10, and successively store the remainder
-     *  in the rightmost space while decrementing the counter. Later we add the
-     *  sign if required.
-     *  ------------------------------------------------------------------------
-     */
-    Int16      sign      = 0 ;
-    Char8      remainder = 0 ;
-    char       temp [11] = {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\0'} ;
-    Int16      index     = 9 ;
+	/*  ------------------------------------------------------------------------
+	 *  There can be a max of 7 char str for signed int including terminator
+	 *  so we use a temp string of 7 char. The index is to the rightmost space
+	 *  ie. 5. We divide the number by 10, and successively store the remainder
+	 *  in the rightmost space while decrementing the counter. Later we add the
+	 *  sign if required.
+	 *  ------------------------------------------------------------------------
+	 */
+	Int16 sign = 0;
+	Char8 remainder = 0;
+	char temp [11] = {' ',' ',' ',' ',' ',' ',' ',' ',' ',' ','\0'};
+	Int16 index = 9;
 
-    sign = (num < 0) ? -1 : 1 ;
-    num = num * sign ;
+	sign = (num < 0) ? -1 : 1;
+	num = num * sign;
 
-    do {
-        remainder = num % 10 ;
-        temp [index] = '0' + remainder ;
-        num = num / 10 ;
-        index-- ;
-    } while ((num > 0)&& (index >= 0)) ;
+	do {
+		remainder = num % 10;
+		temp [index] = '0' + remainder;
+		num = num / 10;
+		index--;
+	}while ((num > 0)&& (index >= 0));
 
+	if (sign == -1) {
+		temp [index] = '-';
+	}
+	else {
+		index++;
+	}
 
-    if (sign == -1) {
-        temp [index] = '-' ;
-    }
-    else {
-        index++ ;
-    }
-
-    strncpy (str, &(temp [index]), 11) ;
+	strncpy (str, &(temp [index]), 11);
 }
 
 /** ============================================================================
@@ -196,26 +185,26 @@ NORMAL_API
 DSP_STATUS
 RING_IO_CreateSem (OUT Pvoid * semPtr)
 {
-    DSP_STATUS          status = DSP_SOK ;
-    RING_IO_SemObject * semObj ;
-    int                 osStatus ;
+	DSP_STATUS status = DSP_SOK;
+	RING_IO_SemObject * semObj;
+	int osStatus;
 
-    semObj = malloc (sizeof (RING_IO_SemObject)) ;
-    if (semObj != NULL) {
-        osStatus = sem_init (&(semObj->sem), 0, 0) ;
-        if (osStatus < 0) {
-            status = DSP_EFAIL ;
-        }
-        else {
-            *semPtr = (Pvoid) semObj ;
-        }
-    }
-    else {
-        *semPtr = NULL ;
-        status = DSP_EFAIL ;
-    }
+	semObj = malloc (sizeof (RING_IO_SemObject));
+	if (semObj != NULL) {
+		osStatus = sem_init (&(semObj->sem), 0, 0);
+		if (osStatus < 0) {
+			status = DSP_EFAIL;
+		}
+		else {
+			*semPtr = (Pvoid) semObj;
+		}
+	}
+	else {
+		*semPtr = NULL;
+		status = DSP_EFAIL;
+	}
 
-    return (status) ;
+	return (status);
 }
 
 /** ============================================================================
@@ -233,18 +222,18 @@ NORMAL_API
 DSP_STATUS
 RING_IO_DeleteSem (IN Pvoid semHandle)
 {
-    DSP_STATUS          status = DSP_SOK ;
-    RING_IO_SemObject * semObj = semHandle ;
-    int                 osStatus ;
+	DSP_STATUS status = DSP_SOK;
+	RING_IO_SemObject * semObj = semHandle;
+	int osStatus;
 
-    osStatus = sem_destroy (&(semObj->sem)) ;
-    if (osStatus < 0) {
-        status = DSP_EFAIL ;
-    }
+	osStatus = sem_destroy (&(semObj->sem));
+	if (osStatus < 0) {
+		status = DSP_EFAIL;
+	}
 
-    free (semObj) ;
+	free (semObj);
 
-    return (status) ;
+	return (status);
 }
 
 /** ============================================================================
@@ -259,16 +248,16 @@ NORMAL_API
 DSP_STATUS
 RING_IO_WaitSem (IN Pvoid semHandle)
 {
-    DSP_STATUS          status = DSP_SOK ;
-    RING_IO_SemObject * semObj = semHandle ;
-    int                 osStatus ;
+	DSP_STATUS status = DSP_SOK;
+	RING_IO_SemObject * semObj = semHandle;
+	int osStatus;
 
-    osStatus = sem_wait (&(semObj->sem)) ;
-    if (osStatus < 0) {
-        status = DSP_EFAIL ;
-    }
+	osStatus = sem_wait (&(semObj->sem));
+	if (osStatus < 0) {
+		status = DSP_EFAIL;
+	}
 
-    return (status) ;
+	return (status);
 }
 
 /** ============================================================================
@@ -283,20 +272,20 @@ NORMAL_API
 DSP_STATUS
 RING_IO_PostSem (IN Pvoid semHandle)
 {
-    DSP_STATUS          status = DSP_SOK ;
-    RING_IO_SemObject * semObj = semHandle ;
-    int                 osStatus ;
+	DSP_STATUS status = DSP_SOK;
+	RING_IO_SemObject * semObj = semHandle;
+	int osStatus;
 
-    osStatus = sem_post (&(semObj->sem)) ;
-    if (osStatus < 0) {
-        status = DSP_EFAIL ;
-    }
+	osStatus = sem_post (&(semObj->sem));
+	if (osStatus < 0) {
+		status = DSP_EFAIL;
+	}
 
-    return (status) ;
+	return (status);
 }
 
 #ifdef RING_IO_MULTIPROCESS
- /** ============================================================================
+/** ============================================================================
  *  @func   RING_IO_getLinkAccess
  *
  *  @desc   Function  that allows the child  process to  use the link
@@ -309,19 +298,19 @@ NORMAL_API
 Int
 RING_IO_getLinkAccess(Uint8 processorId)
 {
-    DSP_STATUS  status   = DSP_SOK ;
+	DSP_STATUS status = DSP_SOK;
 
-    /* Call the Link APIs that allows child process to be able to use the
-     * Link components
-     */
+	/* Call the Link APIs that allows child process to be able to use the
+	 * Link components
+	 */
 
-    status = PROC_Attach (processorId, NULL) ;
+	status = PROC_Attach (processorId, NULL);
 
-    if (DSP_FAILED (status)) {
-        RING_IO_1Print ("Attach Failed. Status = [0x%x]", status) ;
-    }
+	if (DSP_FAILED (status)) {
+		RING_IO_1Print ("Attach Failed. Status = [0x%x]", status);
+	}
 
-    return (status) ;
+	return (status);
 }
 #endif
 
@@ -334,65 +323,63 @@ RING_IO_getLinkAccess(Uint8 processorId)
  *  ============================================================================
  */
 EXPORT_API
-Uint32
-RING_IO_Create_client (RING_IO_ClientInfo * pInfo, Pvoid funcPtr, Pvoid args)
-{
-    DSP_STATUS  status      = DSP_SOK ;
+Uint32 RING_IO_Create_client(RING_IO_ClientInfo * pInfo, Pvoid funcPtr,
+		Pvoid args) {
+	DSP_STATUS status = DSP_SOK;
 
 #ifdef RING_IO_MULTIPROCESS
-    pid_t       processId ;
-    int         result ;
-    DSP_STATUS  retStatus   = DSP_SOK ;
-    int         (*lptrToFun)(void*) = NULL ;
+	pid_t processId;
+	int result;
+	DSP_STATUS retStatus = DSP_SOK;
+	int (*lptrToFun)(void*) = NULL;
 
 #endif
 
 #ifdef RING_IO_MULTIPROCESS
-    /* Create a child process */
-    processId = fork() ;
-    if (processId ==  0)  {
-        /* In Child Process */
+	/* Create a child process */
+	processId = fork();
+	if (processId == 0) {
+		/* In Child Process */
 
-        /* Get the access privileges for the child process */
-        retStatus = RING_IO_getLinkAccess(pInfo->processorId);
-        if (DSP_FAILED(retStatus)) {
-            RING_IO_0Print ("ERR: Unable to initialize DspLink in  Client \n"
-                            /*,&pInfo->processName */ );
-        }else {
-            lptrToFun = funcPtr;
-            /* Call the user function */
-            result =(lptrToFun) (args) ;
-        }
+		/* Get the access privileges for the child process */
+		retStatus = RING_IO_getLinkAccess(pInfo->processorId);
+		if (DSP_FAILED(retStatus)) {
+			RING_IO_0Print ("ERR: Unable to initialize DspLink in  Client \n"
+					/*,&pInfo->processName */);
+		} else {
+			lptrToFun = funcPtr;
+			/* Call the user function */
+			result =(lptrToFun) (args);
+		}
 
-        /* Exit from the child process */
-        exit (0) ;
-    }
-    else if (processId < 0) {
-        status = -1 ;
-        RING_IO_1Print ("Call to fork failed. Status [0x%x]\n",
-                         status) ;
-    }
-    else {
-        /* In parent Process */
-        pInfo->pid = processId ;
-        status = 0 ;
-    }
+		/* Exit from the child process */
+		exit (0);
+	}
+	else if (processId < 0) {
+		status = -1;
+		RING_IO_1Print ("Call to fork failed. Status [0x%x]\n",
+				status);
+	}
+	else {
+		/* In parent Process */
+		pInfo->pid = processId;
+		status = 0;
+	}
 
 #else
-    status = pthread_create(&pInfo->tid,
-                            NULL,/* Attributes of the thread.*/
-                            (void*) funcPtr, /* Pointer to Function.*/
-                            args);
+	status = pthread_create(&pInfo->tid, NULL,/* Attributes of the thread.*/
+	(void*) funcPtr, /* Pointer to Function.*/
+	args);
 #endif
 
-    switch(status) {
-        case 0:
-            return (DSP_SOK);
-        case -1:
-            return (DSP_EFAIL);
-    }
+	switch (status) {
+	case 0:
+		return (DSP_SOK);
+	case -1:
+		return (DSP_EFAIL);
+	}
 
-    return (status) ;
+	return (status);
 }
 
 /** ============================================================================
@@ -404,67 +391,64 @@ RING_IO_Create_client (RING_IO_ClientInfo * pInfo, Pvoid funcPtr, Pvoid args)
  *  ============================================================================
  */
 EXPORT_API
-DSP_STATUS
-RING_IO_Join_client (RING_IO_ClientInfo *pInfo)
-{
-    DSP_STATUS  status   = DSP_EFAIL ;
+DSP_STATUS RING_IO_Join_client(RING_IO_ClientInfo *pInfo) {
+	DSP_STATUS status = DSP_EFAIL;
 #ifdef RING_IO_MULTIPROCESS
-    int         statLoc ;
+	int statLoc;
 #endif
 
 #ifdef RING_IO_MULTIPROCESS
-    do {
-        status = waitpid (pInfo->pid,
-                          &statLoc,
-                          (   WSTOPPED
-                            | WUNTRACED
-                           ) );
-        if (status < 0) {
-            if (EINTR == errno){
-                RING_IO_0Print ("Signal received in Main process !!! \n") ;
-                RING_IO_0Print ("Terminate the child process \n") ;
-                status = API_RESTART ;
-            }
-            else {
-                RING_IO_1Print ("Error exit from wait. Status [0x%x]\n",
-                                status) ;
-                RING_IO_1Print ( "errno is %d \n", errno );
-                status = DSP_EFAIL ;
-            }
-        }
-        else {
-            if (WIFEXITED(statLoc) != 0) {
-                /* Child process exited normally */
-                status = DSP_SOK ;
-            }
-            else if (WIFSIGNALED(statLoc)) {
+	do {
+		status = waitpid (pInfo->pid,
+				&statLoc,
+				( WSTOPPED
+						| WUNTRACED
+				) );
+		if (status < 0) {
+			if (EINTR == errno) {
+				RING_IO_0Print ("Signal received in Main process !!! \n");
+				RING_IO_0Print ("Terminate the child process \n");
+				status = API_RESTART;
+			}
+			else {
+				RING_IO_1Print ("Error exit from wait. Status [0x%x]\n",
+						status);
+				RING_IO_1Print ( "errno is %d \n", errno );
+				status = DSP_EFAIL;
+			}
+		}
+		else {
+			if (WIFEXITED(statLoc) != 0) {
+				/* Child process exited normally */
+				status = DSP_SOK;
+			}
+			else if (WIFSIGNALED(statLoc)) {
 
-                /* Child exited due to uncaught signal */
-                RING_IO_1Print (" Child process exited due to signal %d \n",
-                                  WTERMSIG (statLoc)) ;
-                /* Terminate the child processes and Main process also */
-                kill(0, SIGABRT) ;
-                status = DSP_EFAIL ;
+				/* Child exited due to uncaught signal */
+				RING_IO_1Print (" Child process exited due to signal %d \n",
+						WTERMSIG (statLoc));
+				/* Terminate the child processes and Main process also */
+				kill(0, SIGABRT);
+				status = DSP_EFAIL;
 
-            } else {
-                 RING_IO_1Print (" Child process exited due to status 0%x \n",
-                                   status) ;
-            }
-        }
+			} else {
+				RING_IO_1Print (" Child process exited due to status 0%x \n",
+						status);
+			}
+		}
 
-    } while (status == API_RESTART);
+	}while (status == API_RESTART);
 
 #else
-    status = pthread_join(pInfo->tid, NULL);
+	status = pthread_join(pInfo->tid, NULL);
 #endif
 
-    if (status != 0) {
-        status = DSP_EFAIL ;
-    }
-    else {
-        status = DSP_SOK;
-    }
-    return (status) ;
+	if (status != 0) {
+		status = DSP_EFAIL;
+	} else {
+		status = DSP_SOK;
+	}
+	return (status);
 }
 
 /** ============================================================================
@@ -476,23 +460,20 @@ RING_IO_Join_client (RING_IO_ClientInfo *pInfo)
  *  ============================================================================
  */
 EXPORT_API
-DSP_STATUS
-RING_IO_Exit_client (RING_IO_ClientInfo *pInfo)
-{
-    DSP_STATUS status   = DSP_SOK;
+DSP_STATUS RING_IO_Exit_client(RING_IO_ClientInfo *pInfo) {
+	DSP_STATUS status = DSP_SOK;
 
 #ifdef RING_IO_MULTIPROCESS
-    if(pInfo != NULL) {
-        PROC_detach(pInfo->processorId) ;
-    }
-    exit (0) ;
+	if(pInfo != NULL) {
+		PROC_detach(pInfo->processorId);
+	}
+	exit (0);
 #else
-    pthread_exit(NULL);
+	pthread_exit(NULL);
 #endif
 
-    return (status) ;
+	return (status);
 }
-
 
 /** ============================================================================
  *  @func   RING_IO_OS_init
@@ -503,14 +484,11 @@ RING_IO_Exit_client (RING_IO_ClientInfo *pInfo)
  *  ============================================================================
  */
 NORMAL_API
-DSP_STATUS
-RING_IO_OS_init(Void)
-{
-    DSP_STATUS  status = DSP_SOK ;
+DSP_STATUS RING_IO_OS_init( Void) {
+	DSP_STATUS status = DSP_SOK;
 
-    return status ;
+	return status;
 }
-
 
 /** ============================================================================
  *  @func   RING_IO_OS_exit
@@ -521,12 +499,10 @@ RING_IO_OS_init(Void)
  *  ============================================================================
  */
 NORMAL_API
-DSP_STATUS
-RING_IO_OS_exit(Void)
-{
-    DSP_STATUS status = DSP_SOK ;
+DSP_STATUS RING_IO_OS_exit( Void) {
+	DSP_STATUS status = DSP_SOK;
 
-    return status ;
+	return status;
 }
 
 /** ============================================================================
@@ -538,12 +514,10 @@ RING_IO_OS_exit(Void)
  *  ============================================================================
  */
 NORMAL_API
-Uint32
-RING_IO_Atoll (Char8 * str)
-{
-     Uint32 val = 0 ;
-     val = strtoll (str, NULL, 16) ;
-     return val ;
+Uint32 RING_IO_Atoll(Char8 * str) {
+	Uint32 val = 0;
+	val = strtoll(str, NULL, 16);
+	return val;
 }
 
 #if defined (__cplusplus)
