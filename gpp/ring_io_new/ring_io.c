@@ -483,8 +483,8 @@ RING_IO_Reader_Notify2 ( IN RingIO_Handle handle,
 NORMAL_API
 DSP_STATUS
 RING_IO_Create (IN Char8 * dspExecutable,
-                IN Char8 * strBufferSize,
-                IN Char8 * strTotalBytes,
+               // IN Char8 * strBufferSize,
+               // IN Char8 * strTotalBytes,
                 IN Uint8   processorId)
 {
 
@@ -2175,19 +2175,17 @@ RING_IO_Main (IN Char8 * dspExecutable,
 
     RING_IO_0Print ("========== Sample Application : RING_IO ==========\n") ;
 
-    if (   (dspExecutable != NULL)
-        && (strBufferSize != NULL)
-        && (strBytesToTransfer != NULL)) {
+    if (   (dspExecutable != NULL)) {
         /*
          *  Validate the buffer size  specified.
          */
-        RING_IO_BufferSize = DSPLINK_ALIGN (RING_IO_Atoi (strBufferSize),
+/*        RING_IO_BufferSize = DSPLINK_ALIGN (RING_IO_Atoi (strBufferSize),
                                             DSPLINK_BUF_ALIGN) ;
 
         RING_IO_BytesToTransfer1 = RING_IO_Atoi (strBytesToTransfer) ;
         processorId             = RING_IO_Atoi (strProcessorId) ;
         if (RING_IO_BytesToTransfer1 > 0u) {
-            /* Make RING_IO_BytesToTransfer  multiple of DSPLINK_BUF_ALIGN*/
+            // Make RING_IO_BytesToTransfer  multiple of DSPLINK_BUF_ALIGN
             RING_IO_BytesToTransfer1 = DSPLINK_ALIGN(RING_IO_BytesToTransfer1,
                                                     DSPLINK_BUF_ALIGN) ;
         }
@@ -2201,7 +2199,7 @@ RING_IO_Main (IN Char8 * dspExecutable,
                             RING_IO_WRITER_BUF_SIZE) ;
             status =   DSP_ESIZE ;
 
-        }
+        }*/
 
         if (processorId >= MAX_DSPS){
             RING_IO_1Print ("==Error: Invalid processor id %d specified"
@@ -2215,8 +2213,8 @@ RING_IO_Main (IN Char8 * dspExecutable,
              *  RING_IO creation phase.
              */
             status = RING_IO_Create (dspExecutable,
-                                     strBufferSize,
-                                     strBytesToTransfer,
+                                     //strBufferSize,
+                                    // strBytesToTransfer,
                                      processorId) ;
 			
 		if (DSP_SUCCEEDED (status)) {
@@ -2227,7 +2225,19 @@ RING_IO_Main (IN Char8 * dspExecutable,
 			  	writerClientInfo2.processorId = processorId ;
 				status = RING_IO_Create_client(&writerClientInfo2,
                                             (Pvoid)RING_IO_WriterClient2, NULL) ;
-				 if (status == DSP_SOK) {
+			 if (status != DSP_SOK) {
+#ifdef RING_IO_MULTIPROCESS
+					                        RING_IO_0Print ("ERROR! Failed to create Reader Client "
+					                                        "Process in RING_IO application\n") ;
+
+#else
+					                        RING_IO_0Print ("ERROR! Failed to create Reader Task  "
+					                                        "RING_IO application\n") ;
+#endif
+                    				}
+
+				
+			/*	 if (status == DSP_SOK) {
                    			 readerClientInfo1.processorId = processorId ;
                    			 status = RING_IO_Create_client(&readerClientInfo1,
                                                 (Pvoid)RING_IO_ReaderClient1,
@@ -2271,7 +2281,7 @@ RING_IO_Main (IN Char8 * dspExecutable,
 			                 RING_IO_0Print ("ERROR! Failed to create Writer Task  "
 			                                        "RING_IO application\n") ;
 #endif
-                			}
+                			}*/
 			  	}
 		 else{
 #ifdef RING_IO_MULTIPROCESS
@@ -2328,8 +2338,8 @@ RING_IO_Main (IN Char8 * dspExecutable,
                 /* Wait for the threads/process to  terminate*/
                 RING_IO_Join_client (&writerClientInfo1) ;
 		   RING_IO_Join_client (&writerClientInfo2) ;	
-                RING_IO_Join_client (&readerClientInfo1) ;
-		   RING_IO_Join_client (&readerClientInfo2); 
+             //   RING_IO_Join_client (&readerClientInfo1) ;
+		//   RING_IO_Join_client (&readerClientInfo2); 
 				
             }
 
