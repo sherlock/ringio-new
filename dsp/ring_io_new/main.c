@@ -39,7 +39,6 @@
  *  ============================================================================
  */
 
-
 /* ---------------------------- DSP/BIOS Headers ----------------------------- */
 #include <std.h>
 #include <log.h>
@@ -58,14 +57,12 @@
 #include <hal_interrupt.h>
 #endif
 
-
 /*  --------------------------- RingIO Headers ----------------------------- */
 #include <ringio.h>
 
 /*  --------------------------- Sample Headers ---------------------------- */
 #include <tskRingIo.h>
 #include <ring_io_config.h>
-
 
 /** ============================================================================
  *  @const  FILEID
@@ -75,18 +72,17 @@
  */
 #define FILEID             FID_APP_C
 
-
 /** ============================================================================
  *  @name   RING_IO_dataBufSize
  *
  *  @desc   Size of the data buffer to be allocated for the RingIO.
  *  ============================================================================
  */
-Uint32 RING_IO_dataBufSize1 ;  //  Sending 
-Uint32 RING_IO_dataBufSize2 ;  // Receiving
+Uint32 RING_IO_dataBufSize1; //  Sending
+Uint32 RING_IO_dataBufSize2; // Receiving
 
-Uint32 RING_IO_dataBufSize3 ;  //  Sending read
-Uint32 RING_IO_dataBufSize4 ;  // Receiving read
+Uint32 RING_IO_dataBufSize3; //  Sending read
+Uint32 RING_IO_dataBufSize4; // Receiving read
 
 /** ============================================================================
  *  @name   RING_IO_AttrBufSize
@@ -94,14 +90,14 @@ Uint32 RING_IO_dataBufSize4 ;  // Receiving read
  *  @desc   Size of the attribute buffer to be allocated for the RingIO.
  *  ============================================================================
  */
-Uint16 RING_IO_attrBufSize ;
+Uint16 RING_IO_attrBufSize;
 /** ============================================================================
  *  @name   RING_IO_FootBufSize
  *
  *  @desc   Size of the foot buffer buffer to be allocated for the RingIO.
  *  ============================================================================
  */
-Uint16 RING_IO_footBufSize ;
+Uint16 RING_IO_footBufSize;
 
 #if defined (DSP_BOOTMODE_NOBOOT)
 /** ============================================================================
@@ -110,7 +106,7 @@ Uint16 RING_IO_footBufSize ;
  *  @desc   Flag to indicate to the DSPLINK_init.
  *  ============================================================================
  */
-volatile Uint32 DSPLINK_initFlag = 0xBABAC0C0 ;
+volatile Uint32 DSPLINK_initFlag = 0xBABAC0C0;
 
 #if defined (DM6446GEM)
 /** ============================================================================
@@ -290,14 +286,13 @@ volatile Uint32 DSPLINK_initFlag = 0xBABAC0C0 ;
 
 #endif
 
-
 /** ============================================================================
  *  @name   trace
  *
  *  @desc   trace LOG_Obj used to do LOG_printf
  *  ============================================================================
  */
-extern LOG_Obj trace ;
+extern LOG_Obj trace;
 
 /** ============================================================================
  *  @func   atoi
@@ -317,8 +312,7 @@ extern LOG_Obj trace ;
  *  @see    None
  *  ============================================================================
  */
-extern int atoi (const char *str) ;
-
+extern int atoi(const char *str);
 
 #if defined (DSP_BOOTMODE_NOBOOT)
 /** ----------------------------------------------------------------------------
@@ -337,9 +331,8 @@ extern int atoi (const char *str) ;
  *  @see    None
  *  ----------------------------------------------------------------------------
  */
-static void HAL_initIsr (Ptr arg) ;
+static void HAL_initIsr (Ptr arg);
 #endif
-
 
 /** ----------------------------------------------------------------------------
  *  @func   tskRingIo
@@ -357,10 +350,10 @@ static void HAL_initIsr (Ptr arg) ;
  *  @see    None
  *  ----------------------------------------------------------------------------
  */
-static Int tskRingIo1 () ;
-static Int tskRingIo2 () ;
-TSKRING_IO_TransferInfo * info1 ;
-TSKRING_IO_TransferInfo * info2 ;
+static Int tskRingIo1();
+static Int tskRingIo2();
+TSKRING_IO_TransferInfo * info1;
+TSKRING_IO_TransferInfo * info2;
 /** ============================================================================
  *  @func   main
  *
@@ -369,78 +362,63 @@ TSKRING_IO_TransferInfo * info2 ;
  *  @modif  None
  *  ============================================================================
  */
-Void main (Int argc, Char *argv [])
-{
-    /* TSK based ring_io application */
-    TSK_Handle  tskRingIoTask1 ;  //for sending 
-    TSK_Handle  tskRingIoTask2 ; // for receiving
+Void main(Int argc, Char *argv[]) {
+	/* TSK based ring_io application */
+	TSK_Handle tskRingIoTask1; //for sending
+	TSK_Handle tskRingIoTask2; // for receiving
 
 #if defined (DSP_BOOTMODE_NOBOOT)
-    /* register the init ISR */
-    HAL_intRegister (DSPLINK_INT_ID,
-                     DSPLINK_INT_VEC_ID,
-                    (Fxn) &HAL_initIsr,
-                     0) ;
+	/* register the init ISR */
+	HAL_intRegister (DSPLINK_INT_ID,
+			DSPLINK_INT_VEC_ID,
+			(Fxn) &HAL_initIsr,
+			0);
 #endif
 
 #if !defined (DSP_BOOTMODE_NOBOOT)
-    /* Initialize DSP/BIOS LINK. */
-    DSPLINK_init () ;
-    /* Get the size of the data buffer to be allocated for the RingIO. */
-    RING_IO_dataBufSize1 = atoi (argv [0]) ;
-	RING_IO_dataBufSize2 = atoi (argv [1]) ;
+	/* Initialize DSP/BIOS LINK. */
+	DSPLINK_init();
+	/* Get the size of the data buffer to be allocated for the RingIO. */
+	RING_IO_dataBufSize1 = atoi(argv[0]);
+	RING_IO_dataBufSize2 = atoi(argv[1]);
 
-    /* Get the size of the attribute  buffer to be allocated for the RingIO.*/
-    RING_IO_attrBufSize = atoi (argv [2]);
+	/* Get the size of the attribute  buffer to be allocated for the RingIO.*/
+	RING_IO_attrBufSize = atoi(argv[2]);
 
-    /* Get the size of the footbuffer to be allocated for the RingIO. */
-    RING_IO_footBufSize = atoi (argv [3]);
+	/* Get the size of the footbuffer to be allocated for the RingIO. */
+	RING_IO_footBufSize = atoi(argv[3]);
 #else
-    /* Get the size of the data buffer to be allocated for the RingIO. */
-    RING_IO_dataBufSize1 = 10240 ;
-  RING_IO_dataBufSize2 = 10240 ;
-    /* Get the size of the attribute  buffer to be allocated for the RingIO.*/
-    RING_IO_attrBufSize = 2048 ;
+	/* Get the size of the data buffer to be allocated for the RingIO. */
+	RING_IO_dataBufSize1 = 10240;
+	RING_IO_dataBufSize2 = 10240;
+	/* Get the size of the attribute  buffer to be allocated for the RingIO.*/
+	RING_IO_attrBufSize = 2048;
 
-    /* Get the size of the footbuffer to be allocated for the RingIO. */
-    RING_IO_footBufSize = 0 ;
+	/* Get the size of the footbuffer to be allocated for the RingIO. */
+	RING_IO_footBufSize = 0;
 #endif
 
+	/* Create Phase */
+	TSKRING_IO_create1(&info1);
+	/* Create Phase */
+	TSKRING_IO_create2(&info2);
 
-  /* Create Phase */
-     TSKRING_IO_create1(&info1) ;
-   /* Create Phase */
-      TSKRING_IO_create2 (&info2) ;
+	/* Creating task for RING_IO application */
+	tskRingIoTask1 = TSK_create(tskRingIo1, NULL, 0);
+	if (tskRingIoTask1 != NULL) {
+		LOG_printf(&trace, "Create RING_IO TSK1: Success\n");
+	} else {
+		LOG_printf(&trace, "Create RING_IO TSK1: Failed.\n");
+	}
 
+	/* Creating task for RING_IO application */
+	tskRingIoTask2 = TSK_create(tskRingIo2, NULL, 0);
+	if (tskRingIoTask2 != NULL) {
+		LOG_printf(&trace, "Create RING_IO TSK2: Success\n");
+	} else {
+		LOG_printf(&trace, "Create RING_IO TSK2: Failed.\n");
+	}
 
-
-    /* Creating task for RING_IO application */
-    tskRingIoTask1 = TSK_create (tskRingIo1, NULL, 0) ;
-    if (tskRingIoTask1 != NULL) {
-        LOG_printf(&trace, "Create RING_IO TSK1: Success\n");
-    }
-    else {
-        LOG_printf(&trace, "Create RING_IO TSK1: Failed.\n");
-    }
-
-
-
-
-    /* Creating task for RING_IO application */
-    tskRingIoTask2 = TSK_create (tskRingIo2, NULL, 0) ;
-    if (tskRingIoTask2 != NULL) {
-        LOG_printf(&trace, "Create RING_IO TSK2: Success\n");
-    }
-    else {
-        LOG_printf(&trace, "Create RING_IO TSK2: Failed.\n");
-    }
-
-
-	
-
-
-
-	
 }
 
 /** ----------------------------------------------------------------------------
@@ -453,66 +431,48 @@ Void main (Int argc, Char *argv [])
  */
 
 //For Sending
-static Int tskRingIo1 ()
-{
-    
-    Int                       status = SYS_OK ;
+static Int tskRingIo1() {
 
+	Int status = SYS_OK;
 
+	/* Execute Phase */
+	if (status == SYS_OK) {
+		status = TSKRING_IO_execute1(info1);
+		if (status != SYS_OK) {
+			SET_FAILURE_REASON(status);
+		}
+	}
 
-  
+	/* Delete Phase */
+	status = TSKRING_IO_delete1(info1);
+	if (status != SYS_OK) {
+		SET_FAILURE_REASON(status);
+	}
 
-    /* Execute Phase */
-    if (status == SYS_OK) {
-        status = TSKRING_IO_execute1 (info1) ;
-        if (status != SYS_OK) {
-            SET_FAILURE_REASON (status) ;
-        }
-    }
-
-    /* Delete Phase */
-    status = TSKRING_IO_delete1 (info1) ;
-    if (status != SYS_OK) {
-        SET_FAILURE_REASON (status) ;
-    }
-
-    return (status) ;
+	return (status);
 }
-
-
 
 //For Rev
-static Int tskRingIo2 ()
-{
-    //TSKRING_IO_TransferInfo * info ;
-    Int                       status = SYS_OK ;
+static Int tskRingIo2() {
+	//TSKRING_IO_TransferInfo * info ;
+	Int status = SYS_OK;
 
+	/* Execute Phase */
+	if (status == SYS_OK) {
+		status = TSKRING_IO_execute2(info2);
+		if (status != SYS_OK) {
+			SET_FAILURE_REASON(status);
+		}
+	}
 
+	/* Delete Phase */
+	status = TSKRING_IO_delete2(info2);
+	if (status != SYS_OK) {
+		SET_FAILURE_REASON(status);
+	}
 
-   
-
-    /* Execute Phase */
-    if (status == SYS_OK) {
-        status = TSKRING_IO_execute2 (info2) ;
-        if (status != SYS_OK) {
-            SET_FAILURE_REASON (status) ;
-        }
-    }
-
-    /* Delete Phase */
-    status = TSKRING_IO_delete2 (info2) ;
-    if (status != SYS_OK) {
-        SET_FAILURE_REASON (status) ;
-    }
-
-    return (status) ;
+	return (status);
 }
-
-
-
-
-
-
 
 #if defined (DSP_BOOTMODE_NOBOOT)
 /** ----------------------------------------------------------------------------
@@ -526,16 +486,15 @@ static Int tskRingIo2 ()
 static Void HAL_initIsr (Ptr arg)
 {
 #if defined (DA8XXGEM)
-    volatile Uint32 * chipsig_clr = (Uint32 *) 0x1c14178u ;
+	volatile Uint32 * chipsig_clr = (Uint32 *) 0x1c14178u;
 #endif
-    (Void) arg ;
-    /* Set the INIT Flag */
-    DSPLINK_initFlag = 0xC0C0BABA ;
+	(Void) arg;
+	/* Set the INIT Flag */
+	DSPLINK_initFlag = 0xC0C0BABA;
 #if defined (DA8XXGEM)
-    *chipsig_clr = 0x4 ;
+	*chipsig_clr = 0x4;
 #endif
 }
 
 #endif
-
 
