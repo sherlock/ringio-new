@@ -89,8 +89,8 @@ extern "C" {
 NORMAL_API
 DSP_STATUS
 RING_IO_Create (IN Char8 * dspExecutable,
-                IN Char8 * strBufferSize,
-                IN Char8 * numBytesToTransfer,
+               // IN Char8 * strBufferSize,
+               // IN Char8 * numBytesToTransfer,
                 IN Uint8   processorId) ;
 
 

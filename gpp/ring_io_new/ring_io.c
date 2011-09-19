@@ -926,7 +926,7 @@ RING_IO_WriterClient1 (IN Void * ptr)
 				else {
 					/* Acquire writer bufs and initialize and release them. */
 					//acqSize = RING_IO_WRITER_BUF_SIZE;
-					acqSize = RING_IO_BytesToTransfer1
+					acqSize = RING_IO_BytesToTransfer1;
 					status = RingIO_acquire (RingIOWriterHandle1,
 							&bufPtr ,
 							&acqSize);
@@ -2219,8 +2219,8 @@ RING_IO_ReaderClient1 (IN Void * ptr)
 
 				/* Verify the received data */
 				if (DSP_SOK != RING_IO_Reader_VerifyData (bufPtr,
-								factor,
-								action,
+								//factor,
+								//action,
 								acqSize)) {
 					RING_IO_1Print (" Data1 verification failed after"
 							"%ld bytes received from DSP \n",
@@ -2549,8 +2549,8 @@ RING_IO_ReaderClient2 (IN Void * ptr)
 
 				/* Verify the received data */
 				if (DSP_SOK != RING_IO_Reader_VerifyData (bufPtr,
-								factor,
-								action,
+								//factor,
+								//action,
 								acqSize)) {
 					RING_IO_1Print (" Data verification2 failed after"
 							"%ld bytes received from DSP \n",
